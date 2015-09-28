@@ -13,6 +13,7 @@ defmodule MethexTest do
   	Methex.put(50, @name, 120)
   	Methex.put(150, @name, 120)
   	assert 0.025 == Methex.get_freq(@name)
+    assert [@name] == Methex.keys
   end
   
 end

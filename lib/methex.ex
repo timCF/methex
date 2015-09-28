@@ -56,4 +56,7 @@ defmodule Methex do
   @spec get_freq(String.t) :: float
   def get_freq(name) when is_binary(name), do: ((get(name) |> length) / Methex.Tinca.get(name, :__methex__cache__))
 
+  @spec keys :: [String.t]
+  def keys, do: Methex.Tinca.iterate_acc([], fn({k,_}, acc) -> [k|acc] end, :__methex__cache__)
+
 end
