@@ -2,12 +2,18 @@ defmodule Methex.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :methex,
+    [
+     app: :methex,
      version: "0.0.1",
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps#,
+     #dialyzer: [plt_add_deps: true]
+     #
+     #  TODO : when update types
+     #
+    ]
   end
 
   # Configuration for the OTP application

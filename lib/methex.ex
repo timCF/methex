@@ -1,6 +1,6 @@
 defmodule Methex do
   use Application
-  use Silverb
+  use Silverb,[{"@def_ttl", 60}]
   use Tinca,  [
                 :__methex__cache__
               ]
@@ -22,10 +22,38 @@ defmodule Methex do
     Supervisor.start_link(children, opts)
   end
 
-  def notify(int, name) when is_number(int) and is_binary(name) do
-    #
-    # TODO
-    #
+  @spec put(number, String.t, pos_integer) :: :ok
+  def put(num, name, ttl \\ @def_ttl)
+  def put(num, name, ttl) when is_number(num) and is_binary(name) and is_integer(ttl) and (ttl > 0) do
+    case Methex.Tinca.get(name, :__methex__cache__) do
+      ^ttl -> 
+        :ok = :folsom_metrics.notify(name, num)
+      nil -> 
+        :ok = :folsom_metrics.new_histogram(name, :slide, ttl)
+        Methex.Tinca.put(ttl, name, :__methex__cache__)
+        :ok = :folsom_metrics.notify(name, num)
+      _ ->
+        :ok = :folsom_metrics.delete_metric(name)
+        :ok = :folsom_metrics.new_histogram(name, :slide, ttl)
+        Methex.Tinca.put(ttl, name, :__methex__cache__)
+        :ok = :folsom_metrics.notify(name, num)
+    end
   end
+  @spec get(String.t) :: [number]
+  def get(name) when is_binary(name) do
+    case :folsom_metrics.get_metric_value(name) do
+      [] -> []
+      lst = [_|_] -> lst
+    end
+  end
+  @spec get_average(String.t) :: float
+  def get_average(name) when is_binary(name) do
+    case get(name) do
+      [] -> 0
+      lst = [_|_] -> Enum.sum(lst) / length(lst)
+    end
+  end
+  @spec get_freq(String.t) :: float
+  def get_freq(name) when is_binary(name), do: ((get(name) |> length) / Methex.Tinca.get(name, :__methex__cache__))
 
 end
