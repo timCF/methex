@@ -21,4 +21,11 @@ defmodule Methex do
     opts = [strategy: :one_for_one, name: Methex.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  def notify(int, name) when is_number(int) and is_binary(name) do
+    #
+    # TODO
+    #
+  end
+
 end
