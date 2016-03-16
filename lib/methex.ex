@@ -9,6 +9,11 @@ defmodule Methex do
 		import Supervisor.Spec, warn: false
 		if (:ets.info(@etstable) != :undefined), do: raise("ets table #{inspect @etstable} already exist")
 		true = (@etstable == :ets.new(@etstable, [:public, :named_table, :ordered_set, {:write_concurrency, true}, {:read_concurrency, true}, :protected]))
+		case Logger.add_backend({Methex.Logger, nil}) do
+			{:ok, pid} when is_pid(pid) -> :ok
+			{:error, :already_present} -> :ok
+			some -> raise("can not start Methex.Logger backend, got #{inspect some}")
+		end
 
 		children = [
 			# Define workers and child supervisors to be supervised
