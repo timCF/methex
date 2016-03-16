@@ -22,8 +22,6 @@ defmodule Methex.Mixfile do
   def application do
     [applications:  [
                       :logger,
-                      :silverb,
-                      :tinca,
                       :folsom
                     ],
      mod: {Methex, []}]
@@ -40,8 +38,6 @@ defmodule Methex.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:silverb, github: "timCF/silverb"},
-      {:tinca, github: "timCF/tinca"},
       {:folsom, github: "boundary/folsom"}
     ]
   end
