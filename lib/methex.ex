@@ -55,7 +55,7 @@ defmodule Methex do
 	@spec get_average(String.t) :: float
 	def get_average(name) when is_binary(name) do
 		case get(name) do
-			[] -> 0
+			[] -> 0.0
 			lst = [_|_] -> Enum.sum(lst) / length(lst)
 		end
 	end
@@ -64,12 +64,31 @@ defmodule Methex do
 	def get_freq(name) when is_binary(name) do
 		case :ets.lookup(@etstable, name) do
 			[{^name, ttl}] -> ((get(name) |> length) / ttl)
-			[] -> 0
+			[] -> 0.0
 		end
 	end
 
 
 	@spec keys :: [String.t]
 	def keys, do: :ets.foldl(fn({k,_}, acc) -> [k|acc] end, [], @etstable)
+
+	@spec all_freq :: %{String.t => float}
+	def all_freq, do: :ets.foldl(fn({name,_}, acc) -> Map.put(acc,"freq_#{name}", get_freq(name)) end, %{}, @etstable)
+
+	@spec all_average :: %{String.t => float}
+	def all_average, do: :ets.foldl(fn({name,_}, acc) -> Map.put(acc, "average_#{name}", get_average(name)) end, %{}, @etstable)
+
+	@spec all :: %{String.t => float}
+	def all, do: :ets.foldl(fn({name,_}, acc) -> Map.put(acc,"freq_#{name}", get_freq(name)) |> Map.put("average_#{name}", get_average(name)) end, %{}, @etstable)
+
+	defmacro tc(body, name, ttl \\ @def_ttl) do
+		quote location: :keep do
+			(
+				{time, res} = :timer.tc(fn() -> unquote(body) end)
+				Methex.put(div(time,1000), unquote(name), unquote(ttl))
+				res
+			)
+		end
+	end
 
 end
