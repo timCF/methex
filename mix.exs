@@ -10,7 +10,7 @@ defmodule Methex.Mixfile do
      start_permanent: Mix.env == :prod,
      deps: deps(),
 
-     description: "Metrix system (folsom wrapper) + logger backend",
+     description: "Metrics system (folsom wrapper) + logger backend",
      source_url: "https://github.com/timCF/methex",
      package: [
        licenses: ["Apache 2.0"],
