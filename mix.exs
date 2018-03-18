@@ -8,11 +8,22 @@ defmodule Methex.Mixfile do
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps#,
-     #dialyzer: [plt_add_deps: true]
-     #
-     #  TODO : when update types
-     #
+     deps: deps(),
+
+     description: "Metrix system (folsom wrapper) + logger backend",
+     source_url: "https://github.com/timCF/methex",
+     package: [
+       licenses: ["Apache 2.0"],
+       maintainers: ["Ilja Tkachuk aka timCF"],
+       links: %{
+         "GitHub" => "https://github.com/timCF/methex",
+         "Author's home page" => "https://timcf.github.io/"
+       }
+     ],
+     # Docs
+     name: "Methex",
+     docs: [main: "readme", extras: ["README.md"]],
+
     ]
   end
 
@@ -38,7 +49,8 @@ defmodule Methex.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:folsom, github: "boundary/folsom"}
+      {:folsom, "~> 0.8.5"},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
     ]
   end
 end
